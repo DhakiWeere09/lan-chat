@@ -27,3 +27,6 @@ replay_pid*
 .idea/
 out/
 
+# github
+*.md
+
