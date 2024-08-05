@@ -26,6 +26,7 @@ replay_pid*
 # Intelij Idea
 .idea/
 out/
+META-INF/
 
 # github
 *.md
