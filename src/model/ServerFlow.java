@@ -1,6 +1,6 @@
 package model;
 
-import gui.Main;
+import gui.ConsoleGUI;
 
 public class ServerFlow implements ProgramFlow, Runnable {
 
@@ -10,13 +10,13 @@ public class ServerFlow implements ProgramFlow, Runnable {
 
     @Override
     public boolean setup() {
-        Main.mainOut("ServerFlow Setup");
+        ConsoleGUI.mainOut("ServerFlow Setup");
         return false;
     }
 
     @Override
     public void operationLoop() {
-        Main.mainOut("ServerFlow Loop");
+        ConsoleGUI.mainOut("ServerFlow Loop");
 
     }
 
@@ -24,7 +24,7 @@ public class ServerFlow implements ProgramFlow, Runnable {
     public void run() {
         setup();
         operationLoop();
-        Main.setOperationMode(Main.MODE_IDLE);
+        ConsoleGUI.setOperationMode(ConsoleGUI.MODE_IDLE);
 
     }
 }
