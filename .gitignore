@@ -27,6 +27,7 @@ replay_pid*
 .idea/
 out/
 META-INF/
+src/test
 
 # github
 *.md
