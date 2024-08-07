@@ -14,17 +14,18 @@ public class ConsoleGUI {
     private final static int MODE_CLIENT = 3;
     private final static int MODE_END = 0;
 
-    // scanner Object
+    // scanner
     static Scanner scanner = new Scanner(System.in);
 
     // Getting the Running os
     static final String os = System.getProperty("os.name");
 
-    // operationMode variable
+    // operationMode variable */
     static int operationMode = ConsoleGUI.MODE_IDLE;
 
-    // console formatted graphic output
-    private static void consoleGraphic(String titleMessage) {
+
+    /** console formatted graphic output */
+    public static void consoleGraphic(String titleMessage) {
         // clearing the screen
         // does NOT work in virtual environments like IDE Runtimes Environments
         try {
@@ -57,11 +58,19 @@ public class ConsoleGUI {
 
     }
 
-    public static synchronized void mainOut(String message) {
+
+    /** Main NEWLINE Output for the program */
+    public static synchronized void mainOutNL(String message) {
         System.out.println(Thread.currentThread().getName() + " : " + message);
     }
 
-    // choose Operation Mode
+    /** Main SAMELINE Output for the program */
+    public static synchronized void mainOutSL(String message) {
+        System.out.print(Thread.currentThread().getName() + " : " + message);
+    }
+
+
+    /** choose Operation Mode */
     private static int modeChooserPrompt() {
         String cPhrase = "";
         int mode = 9;
@@ -78,7 +87,7 @@ public class ConsoleGUI {
             } else if (Objects.equals(cPhrase.toLowerCase(), "start client")) {
                 mode = ConsoleGUI.MODE_CLIENT;
             } else {
-                mainOut("Incorrect Response");
+                mainOutNL("Incorrect Response");
             }
 
         }
@@ -86,9 +95,8 @@ public class ConsoleGUI {
         return mode;
     }
 
-    /**
-     * public setter for operation mode control variable
-     */
+
+    /** public setter for operation mode control variable */
     public static void setOperationMode(int m) {
         ConsoleGUI.operationMode = m;
     }
@@ -107,7 +115,7 @@ public class ConsoleGUI {
                         consoleGraphic("ClientFlow Mode");
                         ClientFlow client = new ClientFlow();
                         Thread clientThread = new Thread(client);
-                        mainOut(Thread.currentThread().toString());
+                        mainOutNL(Thread.currentThread().toString());
                         clientThread.start();
                         clientThread.join();
                         operationMode = ConsoleGUI.MODE_IDLE;
