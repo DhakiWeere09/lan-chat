@@ -25,7 +25,7 @@ public class ConsoleGUI {
 
 
     /** console formatted graphic output */
-    public static void consoleGraphic(String titleMessage) {
+    public static synchronized void consoleGraphic(String titleMessage) {
         // clearing the screen
         // does NOT work in virtual environments like IDE Runtimes Environments
         try {
@@ -61,12 +61,12 @@ public class ConsoleGUI {
 
     /** Main NEWLINE Output for the program */
     public static synchronized void mainOutNL(String message) {
-        System.out.println(Thread.currentThread().getName() + " : " + message);
+        System.out.println(message);
     }
 
     /** Main SAMELINE Output for the program */
     public static synchronized void mainOutSL(String message) {
-        System.out.print(Thread.currentThread().getName() + " : " + message);
+        System.out.print(message);
     }
 
 
@@ -118,6 +118,7 @@ public class ConsoleGUI {
                         mainOutNL(Thread.currentThread().toString());
                         clientThread.start();
                         clientThread.join();
+
                         operationMode = ConsoleGUI.MODE_IDLE;
                         break;
 
@@ -133,16 +134,10 @@ public class ConsoleGUI {
                         serverThread.start();
                         serverThread.join();
 
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-            }
-
-
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         }
 

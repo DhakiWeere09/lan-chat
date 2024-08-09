@@ -2,12 +2,12 @@ package model;
 
 import gui.ConsoleGUI;
 
-import java.io.Console;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class ServerFlow implements ProgramFlow, Runnable {
 
@@ -16,7 +16,10 @@ public class ServerFlow implements ProgramFlow, Runnable {
     public static final int ServerConnected = 2;
     public static final int ServerEnded = 3;
 
-    //Server config variables
+    // Scanner Object
+    Scanner scanner = new Scanner(System.in);
+
+    // Server config variables
     int serverState;
     int serverPort;
     int serverTimeOut;
@@ -25,16 +28,19 @@ public class ServerFlow implements ProgramFlow, Runnable {
 
     // Server Socket
     ServerSocket serverSocket;
+    DataInputStream serverIn;
+    DataOutputStream serverOut;
 
     public ServerFlow() {
         try {
             serverState = ServerIdle;
-            serverTimeOut = 5000;
+            serverTimeOut = 20000;
             serverPort = 4000;
 
             // server socket creation
             serverSocket = new ServerSocket(serverPort);
             serverSocket.setSoTimeout(serverTimeOut);
+
 
         } catch (IOException e) {
             ConsoleGUI.mainOutNL("IO Exception");
@@ -48,8 +54,14 @@ public class ServerFlow implements ProgramFlow, Runnable {
         ConsoleGUI.mainOutNL("ServerFlow Setup");
 
         try {
+            // accepting connection and adding the accepted SOCKET object to clients LinkedList
             clients.add(serverSocket.accept());
-            ConsoleGUI.mainOutNL(clients.toString());
+            // changing server state
+            this.serverState = ServerConnected;
+            // setting Input Output Streams
+            serverIn = new DataInputStream(new BufferedInputStream(clients.getFirst().getInputStream()));
+            serverOut = new DataOutputStream(new BufferedOutputStream(clients.getFirst().getOutputStream()));
+
 
             ConsoleGUI.consoleGraphic(String.format(
                     "%d Clients Connected | Server : %s:%s",
@@ -66,7 +78,7 @@ public class ServerFlow implements ProgramFlow, Runnable {
             return false;
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            ConsoleGUI.mainOutNL(ioe.getMessage());
 
             return false;
         }
@@ -75,7 +87,24 @@ public class ServerFlow implements ProgramFlow, Runnable {
 
     @Override
     public void operationLoop() {
-        ConsoleGUI.mainOutNL("ServerFlow Loop");
+        try {
+            String serverInMsg = "";
+            String serverOutMsg = "";
+
+            while (serverState != ServerEnded) {
+                serverInMsg = serverIn.readUTF();
+
+                if (serverInMsg.equals("#")) {
+                    serverState = ServerEnded;
+                }else{
+                    ConsoleGUI.mainOutNL("Client : " + serverInMsg);
+                }
+
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -85,7 +114,12 @@ public class ServerFlow implements ProgramFlow, Runnable {
             if (setup()) {
                 operationLoop();
             }
+
+            serverState = ServerEnded;
+
             serverSocket.close();
+            serverIn.close();
+            serverOut.close();
             ConsoleGUI.setOperationMode(ConsoleGUI.MODE_IDLE);
 
         } catch (IOException e) {
